@@ -1,0 +1,26 @@
+{% extends 'mall/base.html' %}
+
+{% block content %}
+    {% for product in products %}
+    <div class="thumbnails col-xs-12 col-sm-6 col-md-4">
+        <div class="prodCell">
+            <ul class="optColor">
+                {% for color in product_colors %}
+                {% if product.device_name == color.device_name %}
+                <li>
+                    <span style="background-color:{{ color.color_code }}">{{ color.color_name }}</span>
+                </li>
+                {% endif %}
+                {% endfor %}
+            </ul>
+            <a href="https://shop.kt.com/smart/productView.do?prodNo={{ product.device_code }}&vndrNo=AA01344" target="_blank">
+                <img src="{{ product.img_link }}" alt="{{ product.device_name }}" style="height:300px;" class="img-responsive center-block"/>
+                <div class="prodInfo center-block">
+                    <div class="prodName">{{ product.device_name }}</div>
+                    <div class="prodPrice">월 <span>{{ product.device_price }}</span>원~</div>
+                </div>
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+{% endblock %}
