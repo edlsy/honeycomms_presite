@@ -14,7 +14,7 @@ def mall_product_list(request):
     thumbs_link = {}
     color_name = {}
     color_code = {}
-    local_imgs_path = "./mall/static/imgs/device_imgs/"
+    local_imgs_path = "/static/imgs/device_imgs/"
     local_img_path_in_template = "/static/imgs/device_imgs/"
     local_imgs_list = os.listdir(local_imgs_path)
 
