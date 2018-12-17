@@ -1,8 +1,8 @@
 from django.shortcuts import render
-from urllib.request import urlopen
 from urllib.request import urlretrieve
 from bs4 import BeautifulSoup
 import os
+import requests
 from .models import Product, Product_Color
 
 ktshop_url = "https://m.shop.kt.com:444/m/smart/agncyInfoView.do?vndrNo=AA01344&sortProd=SALE"
@@ -18,8 +18,8 @@ def mall_product_list(request):
     local_img_path_in_template = "/static/imgs/device_imgs/"
     local_imgs_list = os.listdir(local_imgs_path)
 
-    html = urlopen(ktshop_url)
-    bsObj = BeautifulSoup(html, "html.parser")
+    req = requests.get(ktshop_url)
+    bsObj = BeautifulSoup(req.text, "html.parser")
     thumbs_blocks = bsObj.findAll("div", {"class": "thumbs"})
     prodInfo_blocks = bsObj.findAll("div", {"class": "prodInfo"})
 
