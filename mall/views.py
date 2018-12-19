@@ -1,8 +1,10 @@
 from django.shortcuts import render
 from urllib.request import urlretrieve
 from bs4 import BeautifulSoup
+from pathlib import Path
 import os
 import requests
+from django.conf import settings
 from .models import Product, Product_Color
 
 ktshop_url = "https://m.shop.kt.com:444/m/smart/agncyInfoView.do?vndrNo=AA01344&sortProd=SALE"
@@ -14,9 +16,10 @@ def mall_product_list(request):
     thumbs_link = {}
     color_name = {}
     color_code = {}
-    local_imgs_path = "/home/honeycomms/honeycomms_presite/mall/static/imgs/device_imgs/"
-    local_img_path_in_template = "/static/imgs/device_imgs/"
-    local_imgs_list = os.listdir(local_imgs_path)
+    #local_imgs_path = "/home/honeycomms/honeycomms_presite/mall/static/imgs/device_imgs/"
+    #local_device_imgs_path = Path("/static/imgs/device_imgs/")
+    local_device_imgs_path = os.path.join(settings.STATIC_ROOT, "imgs/device_imgs/")
+    local_device_imgs_list = os.listdir(local_device_imgs_path)
 
     req = requests.get(ktshop_url)
     bsObj = BeautifulSoup(req.text, "html.parser")
@@ -34,9 +37,9 @@ def mall_product_list(request):
         color_blocks = thumbs.find("ul", {"class": "optColor"}).findAll("li")
 
         # 기종사진 폴더에 이 기종의 이미지 파일이 없으면, 지금 읽어들인 링크의 단말이미지를 저장
-        if (item_name[idx] + ".png") not in local_imgs_list:
+        if (item_name[idx] + ".png") not in local_device_imgs_list:
             print("%s image file saving...\n", item_name[idx])
-            urlretrieve(thumbs_link[idx], local_imgs_path + item_name[idx] + ".png")
+            urlretrieve(thumbs_link[idx], local_device_imgs_path + item_name[idx] + ".png")
 
         for idx2, color_blocks in enumerate(color_blocks):
             color_name[idx2] = color_blocks.find("span").text
@@ -53,7 +56,7 @@ def mall_product_list(request):
             # 기존 DB에 이 기종명과 일치하는 row가 없으면, 지금의 전체 정보(기종명,가격,코드,이미지위치)를 Product 테이블의 새로운 레코드로 추가
             if len(Product.objects.filter(device_name=item_name[idx])) == 0:
                 print("%s info saving...\n", item_name[idx])
-                Product(device_name=item_name[idx], device_price=item_price[idx], device_code=item_code[idx], img_link=local_img_path_in_template+item_name[idx]+".png").save()
+                Product(device_name=item_name[idx], device_price=item_price[idx], device_code=item_code[idx], img_link=local_device_imgs_path+item_name[idx]+".png").save()
             # 기존 DB에 이 기종명과 일치하는 row가 있으면, 가격정보만 업데이트
             else:
                 print("%s price updating...\n", item_name[idx])
