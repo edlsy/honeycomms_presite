@@ -7,7 +7,7 @@ import requests
 from django.conf import settings
 from .models import Product, Product_Color
 
-ktshop_url = "https://m.shop.kt.com:444/m/smart/agncyInfoView.do?vndrNo=AA01344&sortProd=SALE"
+ktshop_url = "https://shop.kt.com/smart/agncyInfoView.do?vndrNo=AA01344&sortProd=SALE"
 
 def mall_product_list(request):
     item_name = {}
